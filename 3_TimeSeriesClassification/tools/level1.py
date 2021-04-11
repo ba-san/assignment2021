@@ -31,7 +31,7 @@ def level1(path):
         plt.plot(x, v1_dlist)
         plt.plot(x, v2_dlist)
         plt.ylim(-1,1)
-        plt.title(os.path.basename(path)+"    1:{:.5g}  2:{:.5g}".format(distance1, distance2))
+        plt.title(os.path.basename(path)+"    1:{:.5g}  2:{:.5g}".format(distance1, distance2), fontsize=18)
         #plt.show()
         fig.savefig(path+".png")
 
