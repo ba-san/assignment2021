@@ -5,9 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-def dtw_self_implemented_v2(x1, y1, z1, x2, y2, z2):
+def dtw_self_implemented_v3(x1, y1, z1, x2, y2, z2):
     # Initialization
-    Cumul = [[float('inf') for i in range(len(x1)+1)] for j in range(len(x2)+1)]
+    longer = len(x1) if len(x1)>len(x2) else len(x2)
+
+    Cumul = [[float('inf') for i in range(longer+1)] for j in range(longer+1)]
     Cumul[0][0] = 0.0
 
    # Main loop
@@ -19,11 +21,11 @@ def dtw_self_implemented_v2(x1, y1, z1, x2, y2, z2):
     return math.sqrt(Cumul[len(x1)][len(x2)])
 
 
-def level2(path):
-    with open( '../dataset/level2/reference/1.dat') as v1:
+def level3(path):
+    with open( '../dataset/level3/reference/1.dat') as v1:
         v1_data = v1.readlines()
         
-    with open( '../dataset/level2/reference/2.dat') as v2:
+    with open( '../dataset/level3/reference/2.dat') as v2:
         v2_data = v2.readlines()
 
     with open(path) as f:
@@ -43,8 +45,8 @@ def level2(path):
         z = [float(s[i].split('\t')[2]) for i in range(len(s))]
         
         # calc dtw (smalle is better)
-        distance1 = dtw_self_implemented_v2(x_v1, y_v1, z_v1, x, y, z)
-        distance2 = dtw_self_implemented_v2(x_v2, y_v2, z_v2, x, y, z)
+        distance1 = dtw_self_implemented_v3(x_v1, y_v1, z_v1, x, y, z)
+        distance2 = dtw_self_implemented_v3(x_v2, y_v2, z_v2, x, y, z)
         
         print('self implemented dtw| class1:{} class2:{}\n'.format(distance1, distance2))
         
@@ -62,5 +64,5 @@ def level2(path):
         
 if __name__=="__main__":    
     for i in range(6):
-        path = '../dataset/level2/test/{}.dat'.format(i+1)
-        level2(path)
+        path = '../dataset/level3/test/{}.dat'.format(i+1)
+        level3(path)
