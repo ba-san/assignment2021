@@ -1,46 +1,26 @@
 #https://qiita.com/hcpmiyuki/items/251586526c5924f09aa3
 
-import os
+import os, math
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from fastdtw import fastdtw
 
-def calc_dtw(x, y, z):
-    pass
+def dtw_self_implemented_v2(x1, y1, z1, x2, y2, z2):
+    # Initialization
+    Cumul = [[float('inf') for i in range(len(x1)+1)] for j in range(len(x2)+1)]
+    Cumul[0][0] = 0.0
 
-def level1(path):
-    with open( '../dataset/level1/reference/1.dat') as v1:
-        v1_data = v1.readlines()
-        
-    with open( '../dataset/level1/reference/2.dat') as v2:
-        v2_data = v2.readlines()
+   # Main loop
+    for i in range(1,1+len(x1)):
+        for j in range(1,1+len(x2)):
+            dist = abs(x1[i-1]-x2[j-1])**2+abs(y1[i-1]-y2[j-1])**2+abs(z1[i-1]-z2[j-1])**2 # euclidean distance for this
+            Cumul[i][j] = dist + min(Cumul[i-1][j], Cumul[i][j-1], Cumul[i-1][j-1])
 
-    with open(path) as f:
-        s = f.readlines()
-        
-        # get data
-        x = list(range(len(s)))
-        v1_dlist = [float(v1_data[i]) for i in range(len(v1_data))]
-        v2_dlist = [float(v2_data[i]) for i in range(len(v2_data))]
-        y = [float(s[i]) for i in range(len(s))]
-        
-        # calc dtw (smalle is better)
-        distance1, path1 = fastdtw(v1_dlist, y)
-        distance2, path2 = fastdtw(v2_dlist, y)
-        
-        # prep graph
-        fig = plt.figure()
-        plt.plot(x, y)
-        plt.plot(x, v1_dlist)
-        plt.plot(x, v2_dlist)
-        plt.ylim(-1,1)
-        plt.title(os.path.basename(path)+"    1:{:.5g}  2:{:.5g}".format(distance1, distance2), fontsize=18)
-        #plt.show()
-        fig.savefig(path+".png")
+    return math.sqrt(Cumul[len(x1)][len(x2)])
 
 
-def level2(path):
+def level2_v2(path):
     with open( '../dataset/level2/reference/1.dat') as v1:
         v1_data = v1.readlines()
         
@@ -63,13 +43,22 @@ def level2(path):
         y = [float(s[i].split('\t')[1]) for i in range(len(s))]
         z = [float(s[i].split('\t')[2]) for i in range(len(s))]
         
+        # calc dtw (smalle is better)
+        distance1 = dtw_self_implemented_v2(x_v1, y_v1, z_v1, x, y, z)
+        distance2 = dtw_self_implemented_v2(x_v2, y_v2, z_v2, x, y, z)
+        
+        print('self implemented dtw| class1:{} class2:{}\n'.format(distance1, distance2))
+        
+        # prep graph
         fig = plt.figure()
-        ax = Axes3D(fig)
+        title = "{}    1:{:.5g}  2:{:.5g}".format(os.path.basename(path), distance1, distance2)
+        ax = Axes3D(fig, auto_add_to_figure=False)
+        fig.add_axes(ax)
         ax.plot(x, y, z)
         ax.plot(x_v1, y_v1, z_v1)
         ax.plot(x_v2, y_v2, z_v2)
-        plt.title(os.path.basename(path))
-        plt.show()
+        ax.text2D(0.1,0.9,title, transform=ax.transAxes, fontsize=18)
+        #plt.show()
         fig.savefig(path+".png")
         
 if __name__=="__main__":    
