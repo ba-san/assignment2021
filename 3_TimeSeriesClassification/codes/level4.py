@@ -3,9 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-def dtw_self_implemented_v2(ref, test):
+def dtw_self_implemented_v4(ref, test):
     # Initialization
-
     Cumul = [[float('inf') for i in range(256+1)] for j in range(256+1)]
     Cumul[0][0] = 0.0
 
@@ -13,40 +12,52 @@ def dtw_self_implemented_v2(ref, test):
     for i in range(1,1+256):
         for j in range(1,1+256):
             dist = 0
-            for k in range(64):
-                dist += abs(ref[k]-test[k
-            #dist = abs(x1[i-1]-x2[j-1])**2+abs(y1[i-1]-y2[j-1])**2+abs(z1[i-1]-z2[j-1])**2 # euclidean distance for this
+            for k in range(64): # 64-dimension euclidean distance
+                dist += abs(ref[k][i-1]-test[k][j-1])**2
             Cumul[i][j] = dist + min(Cumul[i-1][j], Cumul[i][j-1], Cumul[i-1][j-1])
 
-    return math.sqrt(Cumul[len(x1)][len(x2)])
+    return math.sqrt(Cumul[256][256])
 
-def level3(path):
-    with open( '../dataset/level4/reference/1/data1.dat') as v1:
-        v1_data = v1.readlines()
+def level4(path):
+    distance1_sum, distance2_sum = 0, 0
+    for t in range(3):
+        with open( '../dataset/level4/reference/1/data{}.dat'.format(t+1)) as v1:
+            v1_data1 = v1.readlines()
+            
+        with open( '../dataset/level4/reference/2/data{}.dat'.format(t+1)) as v2:
+            v2_data1 = v2.readlines()
+    
+        with open(path) as f:
+            s = f.readlines()
+            
+            # get data
+            ref1 = [[0]*256 for i in range(64)]
+            ref2 = [[0]*256 for i in range(64)]
+            test = [[0]*256 for i in range(64)]
+            
+            for i in range(64):
+                ref1[i] = [float(v1_data1[j].split('\t')[i]) for j in range(len(v1_data1))]
+                ref2[i] = [float(v2_data1[j].split('\t')[i]) for j in range(len(v2_data1))]
+                test[i] = [float(s[j].split('\t')[i]) for j in range(len(s))]
+            
+            # calc dtw
+            distance1 = dtw_self_implemented_v4(ref1, test)
+            distance2 = dtw_self_implemented_v4(ref2, test)
+            
+            distance1_sum += distance1
+            distance2_sum += distance2
+            
+            print('data{} dtw| class1:{} class2:{}\n'.format(t+1, distance1, distance2))
+    
+    print('*' * 80)
+    print('average dtw| class1:{} class2:{}'.format(distance1_sum/3.0, distance2_sum/3.0))
+    print('*' * 80)
+    print('\n')
         
-    with open( '../dataset/level4/reference/1/data2.dat') as v2:
-        v2_data = v2.readlines()
-
-    with open(path) as f:
-        s = f.readlines()
-        
-        # get data
-        ref1 = [0 for i in range(64)]
-        ref2 = [0 for i in range(64)]
-        test = [0 for i in range(64)]
-        
-        for i in range(64):
-            ref1[i] = [float(v1_data[j].split('\t')[i]) for j in range(len(v1_data))]
-            ref2[i] = [float(v2_data[j].split('\t')[i]) for j in range(len(v2_data))]
-            test[i] = [float(s[j].split('\t')[i]) for j in range(len(s))]
-        
-        # calc dtw
-        distance1 = dtw_self_implemented_v4(ref1, test)
-        distance2 = dtw_self_implemented_v4(ref2, test)
-        
-        print('self implemented dtw| class1:{} class2:{}\n'.format(distance1, distance2))
-        
-if __name__=="__main__":    
+if __name__=="__main__":
+    distance1_list = [[0]*3 for i in range(14)]
+    distance2_list = [[0]*3 for i in range(14)]
+    
     for i in range(14):
         path = '../dataset/level4/test/data{}.dat'.format(i+1)
-        level3(path)
+        level4(path)

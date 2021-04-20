@@ -12,7 +12,7 @@ def dtw_self_implemented_v3(x1, y1, z1, x2, y2, z2):
    # Main loop
     for i in range(1,1+len(x1)):
         for j in range(1,1+len(x2)):
-            dist = abs(x1[i-1]-x2[j-1])**2+abs(y1[i-1]-y2[j-1])**2+abs(z1[i-1]-z2[j-1])**2 # euclidean distance for this
+            dist = abs(x1[i-1]-x2[j-1])**2+abs(y1[i-1]-y2[j-1])**2+abs(z1[i-1]-z2[j-1])**2 # 3-dimension euclidean distance
             Cumul[i][j] = dist + min(Cumul[i-1][j], Cumul[i][j-1], Cumul[i-1][j-1])
 
     return math.sqrt(Cumul[len(x1)][len(x2)])
