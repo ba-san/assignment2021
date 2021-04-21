@@ -20,6 +20,7 @@ def dtw_self_implemented_v4(ref, test):
 
 def level4(path):
     distance1_sum, distance2_sum = 0, 0
+    distance_dict = {}
     for t in range(3):
         with open( '../dataset/level4/reference/1/data{}.dat'.format(t+1)) as v1:
             v1_data1 = v1.readlines()
@@ -43,14 +44,29 @@ def level4(path):
             # calc dtw
             distance1 = dtw_self_implemented_v4(ref1, test)
             distance2 = dtw_self_implemented_v4(ref2, test)
+            distance_dict["class1_{}".format(t+1)] = distance1
+            distance_dict["class2_{}".format(t+1)] = distance2
             
             distance1_sum += distance1
             distance2_sum += distance2
-            
-            print('data{} dtw| class1:{} class2:{}\n'.format(t+1, distance1, distance2))
+
+    # kNN
+    sorted_dict = sorted(distance_dict.items(), key=lambda x:x[1])
+    print(sorted_dict)
+    cnt = 0
+    class1_cnt = 0
+    for t in sorted_dict:
+        if(cnt==3):
+            break
+        if("class1" in t[0]):
+            class1_cnt+=1
+        cnt+=1
     
+    # result
     print('*' * 80)
     print('average dtw| class1:{} class2:{}'.format(distance1_sum/3.0, distance2_sum/3.0))
+    print('*' * 80)
+    print("kNN (k=3)| class1:{} class2:{}".format(class1_cnt, 3-class1_cnt))
     print('*' * 80)
     print('\n')
         

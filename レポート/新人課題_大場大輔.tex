@@ -22,10 +22,10 @@
 %\pagestyle{myheadings}
 \pagestyle{fancy}
 \lhead[名前]{大場 大輔}
-\rhead[令和3年4月15日]{令和3年4月19日}
+\rhead[日付]{令和3年4月21日}
 \title{新人ゼミ課題}
 \author{大場 大輔}
-\date{令和3年4月19日}
+\date{令和3年4月21日}
 
 \begin{document}
 	\maketitle
@@ -35,6 +35,7 @@
 \section*{3.時系列識別}
 すでに画像処理やPythonを用いたプログラミングの経験があることと、Brian研究室に配属されたことを考慮して、このコースを選択しました。
 なお、本レポートで使用したソースコードはこのページ\footnote{\url{https://github.com/ba-san/assignment2021}}にて確認できます。
+具体的には\verb+3_TimeSeriesClassification/codes+の中に、各レベルごとに使用したコードを載せてあります。不明点があれば、ぜひお知らせください。
 まずは、今回のレポートで使用した動的時間伸縮法とk近傍法について簡単に要点を報告します。
 
 \subsection*{動的時間伸縮法について}
@@ -193,11 +194,54 @@ k近傍法(kNN; k-Nearest Neighbor)とは、データ分類手法の一つであ
 \newpage
 
 \subsection*{Level4}
-まずは、これまでと同様にして
+これまでと同様にして考え、時系列長256の64次元データも扱えるようにプログラムを拡張しました。
+このプログラムの実行は数分程度で終わったため、特に次元削減や間引きなどの処理は行っていません。
 
-この設問は、Brian先生の新人ゼミの内容からTCN(Temporal Co)が訓練時間が短く、高い精度を出すと紹介されていたので、この手法を用いて推定を行いました。
-%主成分分析使えれば次元削減は可能だが...
-	
-	
+このデータの分類を行うに当たって、各クラス３つのデータが用意されていたため、まずは各クラスのデータ平均をそれぞれ取得して、その値をクラス間で比較しました。
+以下の表に示すとおり、\textbf{data1からdata7及びdata13がクラス１に、data8からdata12及びdata14はクラス２に属する}ことがわかりました。
+\begin{table}[htb]
+\centering
+\caption{DTWの平均値による分類(太字が該当クラス。小数点第３位以下は切り捨て)}
+\begin{tabular}{|c|c|c|c|c|} \hline
+ & test1 average & test2 average \\ \hline \hline
+data1 & \textbf{12.468} & 12.861 \\ \hline
+data2 & \textbf{12.931} & 13.588 \\ \hline
+data3 & \textbf{10.386} & 11.996 \\ \hline
+data4 & \textbf{10.041} & 15.563 \\ \hline
+data5 & \textbf{10.661} & 14.449 \\ \hline
+data6 & \textbf{11.137} & 15.459 \\ \hline
+data7 & \textbf{11.227} & 13.167 \\ \hline
+data8 & 12.726 & \textbf{10.115} \\ \hline
+data9 & 20.307 & \textbf{18.842} \\ \hline
+data10 & 11.123 & \textbf{10.844} \\ \hline
+data11 & 13.092 & \textbf{9.869} \\ \hline
+data12 & 14.833 & \textbf{11.643} \\ \hline
+data13 & \textbf{21.166} & 21.435 \\ \hline
+data14 & 17.545 & \textbf{11.752} \\ \hline
+\end{tabular}
+\end{table}
+
+この他、k=3とするk近傍法も試してみました。この分類結果は平均を用いた場合と変わりませんでした。
+\begin{table}[htb]
+\centering
+\caption{k近傍法による分類(太字が該当クラス。k=3)}
+\begin{tabular}{|c|c|c|c|c|} \hline
+ & test1 & test2 \\ \hline \hline
+data1 & \textbf{2} & 1 \\ \hline
+data2 & \textbf{2} & 1 \\ \hline
+data3 & \textbf{2} & 1 \\ \hline
+data4 & \textbf{3} & 0 \\ \hline
+data5 & \textbf{3} & 0 \\ \hline
+data6 & \textbf{3} & 0 \\ \hline
+data7 & \textbf{2} & 1 \\ \hline
+data8 & 1 & \textbf{2} \\ \hline
+data9 & 1 & \textbf{2} \\ \hline
+data10 & 1 & \textbf{2} \\ \hline
+data11 & 0 & \textbf{3} \\ \hline
+data12 & 0 & \textbf{3} \\ \hline
+data13 & \textbf{2} & 1 \\ \hline
+data14 & 0 & \textbf{3} \\ \hline
+\end{tabular}
+\end{table}
 	
 \end{document}
